@@ -25,7 +25,7 @@ class pendulumDynamics:
         self.a1 = 2.0
         self.b0 = 4.0
         # modify the system parameters by random value to account for uncertainty in IRL systems
-        alpha = 0.2 # Uncertainty parameter/percentage of deviation
+        alpha = 0.0 # Uncertainty parameter/percentage of deviation
         self.a1 = self.a1 * (1.+alpha*(2.*np.random.rand()-1.))
         self.a0 = self.a0 * (1.+alpha*(2.*np.random.rand()-1.))
         self.b0 = self.b0 * (1.+alpha*(2.*np.random.rand()-1.))

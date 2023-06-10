@@ -9,7 +9,7 @@
 from matplotlib import pyplot as plt
 from matplotlib import patches as mpatches
 import numpy as np 
-import Param as P
+import pendulumParam as P
 # if you are having difficulty with the graphics, 
 # try using one of the following backends  
 # See https://matplotlib.org/stable/users/explain/backends.html
