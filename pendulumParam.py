@@ -4,9 +4,10 @@ import numpy as np
 # Physical parameters of the inverted pendulum known to the controller
 m1 = 0.25     # Mass of the pendulum, kg
 m2 = 1.0      # Mass of the cart, kg
-ell = 1.0    # Length of the rod, m
+ell = 1.0     # Length of the rod, m
 g = 9.8       # Gravity, m/s**2
 b = 0.05      # Damping coefficient, Ns
+alpha = 0.0
 
 # parameters for animation
 w = 0.5       # Width of the cart, m

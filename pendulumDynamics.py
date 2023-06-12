@@ -7,28 +7,26 @@
 # ----------------------
 
 import numpy as np
+import pendulumParam as P
 
 class pendulumDynamics:
-    def __init__(self, sample_rate):
-        # initial state conditions
-        y0 = 0.0
-        ydot0 = 0.0
+    def __init__(self):
+        # initial state conditions stored here
         self.state = np.array([
-            [y0],       # initial condition for y
-            [ydot0],    # initial condition for ydot
+            [P.z0],             # initial condition for z
+            [P.theta0],         # initial condition for theta
+            [P.zdot0],          # initial condition for z dot
+            [P.thetadot0]       # initial condition for theta dot
             ])
-        self.Ts = sample_rate # sample rate of system
-        self.limit = 1.0 # input saturation limit
-        # nominal system parameters (i.e. important parameters like stiffness, mass, etc., dependent on
-        # equations of motion converted to state space form)
-        self.a0 = 3.0
-        self.a1 = 2.0
-        self.b0 = 4.0
-        # modify the system parameters by random value to account for uncertainty in IRL systems
-        alpha = 0.0 # Uncertainty parameter/percentage of deviation
-        self.a1 = self.a1 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.a0 = self.a0 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.b0 = self.b0 * (1.+alpha*(2.*np.random.rand()-1.))
+        self.Ts = P.Ts          # sample rate of system
+        self.limit = 1.0        # input saturation limit
+        # system parameters to be used in this class (modified by alpha to account for uncertainty)
+        self.m1 = P.m1 * (1.+P.alpha*(2.*np.random.rand()-1.))
+        self.m2 = P.m2 * (1.+P.alpha*(2.*np.random.rand()-1.))
+        self.b  = P.b  * (1.+P.alpha*(2.*np.random.rand()-1.))
+        self.l  = P.ell * (1.+P.alpha*(2.*np.random.rand()-1.))
+        self.g  = P.g
+        self.force_limit = P.F_max
 
     # EOM here
     def f(self, state, u):
