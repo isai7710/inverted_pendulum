@@ -16,7 +16,7 @@ class pendulumDynamics:
             [P.theta0],             # initial condition for theta
             [P.z0],                 # initial condition for z
             [P.thetadot0],          # initial condition for theta dot
-            [P.zdot]                # initial condition for z dot
+            [P.zdot0]                # initial condition for z dot
             ])
         self.Ts = P.Ts          # sample rate of system
         self.limit = 1.0        # input saturation limit
