@@ -26,16 +26,15 @@ Ts = 0.01       # sample rate for dynamics and controller
 pendulum = pendulumDynamics()
 # controller = Controller(sample_rate=Ts)
 reference = signalGenerator(amplitude=0.5, frequency=0.02)
-force = signalGenerator(amplitude=0.25, frequency=1)
+force = signalGenerator(amplitude=0.25, frequency=0.01)
 # disturbance = signalGenerator(amplitude=1.0, frequency = 0.0)
 # noise = signalGenerator(amplitude=0.01)
 
 # instantiate the simulation plots and animation
-# dataPlot = dataPlotter()
-animation = pendulumAnimation()
+dataPlot = dataPlotter()
+# animation = pendulumAnimation()
 
 t = t_start
-y = pendulum.h()  # output of system at start of simulation
 # main simulation loop
 while t < t_end:
     # set time for next plot
@@ -45,12 +44,12 @@ while t < t_end:
         r = reference.square(t)     # assign reference
         # d = disturbance.step(t)   # simulate input disturbance
         # n = noise.random(t)       # simulate sensor noise
-        u = force.square(t)            # update controller
+        u = force.sin(t)            # update controller
         y = pendulum.update(u)       # Propagate the dynamics
         t = t + Ts # advance time by Ts
     # update animation and data plots
-    animation.update(pendulum.state)
-    # dataPlot.update(t, r, pendulum.state, u)
+    # animation.update(pendulum.state)
+    dataPlot.update(t, r, pendulum.state, u)
     # pause causes the figure to be displayed during the simulation
     plt.pause(0.0001)
 

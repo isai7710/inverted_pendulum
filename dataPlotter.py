@@ -6,90 +6,117 @@
 # Description: data plotter class
 # ----------------------
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 from matplotlib.lines import Line2D
 import numpy as np
 
-plt.ion()   # enables interactive drawing
+plt.ion()  # enable interactive drawing
+
 
 class dataPlotter:
+    ''' 
+        This class plots the time histories for the pendulum data.
+    '''
+
     def __init__(self):
         # Number of subplots = num_of_rows*num_of_cols
-        self.num_rows = 3 # Number of subplot rows
-        self.num_cols = 1 # Number of subplot columns
+        self.num_rows = 3    # Number of subplot rows
+        self.num_cols = 1    # Number of subplot columns
+
         # Crete figure and axes handles
-        self.fig, self.ax = plt.subplots(self.num_rows,
-        self.num_cols,
-        sharex=True)
+        self.fig, self.ax = plt.subplots(self.num_rows, self.num_cols, sharex=True)
+
         # Instantiate lists to hold the time and data histories
-        self.time_history = [] # time
-        self.r_history = [] # reference r
-        self.y_history = [] # output y
-        self.ydot_history = [] # velocity ydot
-        self.u_history = [] # input u
+        self.time_history = []  # time
+        self.zref_history = []  # reference position z_r
+        self.z_history = []  # position z
+        self.theta_history = []  # angle theta
+        self.Force_history = []  # control force
+
         # create a handle for every subplot.
         self.handle = []
-        self.handle.append(subplotWindow(self.ax[0], ylabel='y', title='Simple System'))
-        self.handle.append(subplotWindow(self.ax[1], ylabel='ydot'))
-        self.handle.append(subplotWindow(self.ax[2], xlabel='t(s)', ylabel='u'))       
+        self.handle.append(myPlot(self.ax[0], ylabel='z(m)', title='Pendulum Data'))
+        self.handle.append(myPlot(self.ax[1], ylabel='theta(deg)'))
+        self.handle.append(myPlot(self.ax[2], xlabel='t(s)', ylabel='force(N)'))
 
-    def update(self, time, reference, state, control):
+    def update(self, t, reference, states, ctrl):
+        '''
+            Add to the time and data histories, and update the plots.
+        '''
         # update the time history of all plot variables
-        self.time_history.append(time)
-        self.r_history.append(reference)
-        self.y_history.append(state.item(0))
-        self.ydot_history.append(state.item(1))
-        self.u_history.append(control)
+        self.time_history.append(t)  # time
+        self.zref_history.append(reference)  # reference base position
+        self.z_history.append(states[0,0])  # base position
+        self.theta_history.append(180.0/np.pi*states[1,0])  # rod angle (converted to degrees)
+        self.Force_history.append(ctrl)  # force on the base
 
         # update the plots with associated histories
-        self.handle[0].update(self.time_history, [self.r_history, self.y_history])
-        self.handle[1].update(self.time_history, [self.ydot_history])
-        self.handle[1].update(self.time_history, [self.u_history])
+        self.handle[0].update(self.time_history, [self.z_history, self.zref_history])
+        self.handle[1].update(self.time_history, [self.theta_history])
+        self.handle[2].update(self.time_history, [self.Force_history])
 
-# Create each individual subplot using this class
-class subplotWindow:
-    def __init__(self, ax, xlabel='', ylabel='', title='', legend=None):
-        '''
-        ax - This is a handle to the axes of the figure
-        xlable - Label of the x-axis
-        ylable - Label of the y-axis
-        title - Plot title
-        legend - A tuple of strings that identify the data, EX: ("data1","data2", ... , "dataN")
+
+class myPlot:
+    ''' 
+        Create each individual subplot.
+    '''
+    def __init__(self, ax,
+                 xlabel='',
+                 ylabel='',
+                 title='',
+                 legend=None):
+        ''' 
+            ax - This is a handle to the  axes of the figure
+            xlable - Label of the x-axis
+            ylable - Label of the y-axis
+            title - Plot title
+            legend - A tuple of strings that identify the data. 
+                     EX: ("data1","data2", ... , "dataN")
         '''
         self.legend = legend
-        self.ax = ax                # axes handle
-        self.colors = ['b', 'g', 'r', 'c', 'm', 'y']    # list of colors
-        # ’b’ - blue, ’g’ - green, ’r’ - red, ’c’ - cyan,
-        # ’m’ - magenta, ’y’ - yellow, ’k’ - black
-        self.line_styles = ['-', '--', '-.', ':']       # list of line styles
-        # ’-’ solid, ’--’ dashed, ’-.’ dash_dot, ’:’ dotted
+        self.ax = ax                  # Axes handle
+        self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
+        # A list of colors. The first color in the list corresponds
+        # to the first line object, etc.
+        # 'b' - blue, 'g' - green, 'r' - red, 'c' - cyan, 'm' - magenta
+        # 'y' - yellow, 'k' - black
+        self.line_styles = ['-', '-', '--', '-.', ':']
+        # A list of line styles.  The first line style in the list
+        # corresponds to the first line object.
+        # '-' solid, '--' dashed, '-.' dash_dot, ':' dotted
+
         self.line = []
-        # Configure the axes here:
+
+        # Configure the axes
         self.ax.set_ylabel(ylabel)
         self.ax.set_xlabel(xlabel)
         self.ax.set_title(title)
         self.ax.grid(True)
-        # keep track of initialization
-        self.init = True
 
-    # Adds data to the plot
+        # Keeps track of initialization
+        self.init = True   
+
     def update(self, time, data):
-        # initialize the plot the first time routine is called
-        if self.init==True:
+        ''' 
+            Adds data to the plot.  
+            time is a list, 
+            data is a list of lists, each list corresponding to a line on the plot
+        '''
+        if self.init == True:  # Initialize the plot the first time routine is called
             for i in range(len(data)):
-                # instantiate line object and add it to the axes
-                self.line.append(Line2D(time, data[i], 
-                                        color=self.colors[np.mod(i, len(self.colors)-1)],
+                # Instantiate line object and add it to the axes
+                self.line.append(Line2D(time,
+                                        data[i],
+                                        color=self.colors[np.mod(i, len(self.colors) - 1)],
                                         ls=self.line_styles[np.mod(i, len(self.line_styles) - 1)],
-                                        label=self.legend if self.legend!=None else None))
+                                        label=self.legend if self.legend != None else None))
                 self.ax.add_line(self.line[i])
-            self.init=False
+            self.init = False
             # add legend if one is specified
-            if self.legend!=None:
+            if self.legend != None:
                 plt.legend(handles=self.line)
-        # add new data to the plot after initializing 
-        else: 
-            # update the x and y data of each line with the following
+        else: # Add new data to the plot
+            # Updates the x and y data of each line.
             for i in range(len(self.line)):
                 self.line[i].set_xdata(time)
                 self.line[i].set_ydata(data[i])
@@ -97,3 +124,4 @@ class subplotWindow:
         # Adjusts the axis to fit all of the data
         self.ax.relim()
         self.ax.autoscale()
+           
