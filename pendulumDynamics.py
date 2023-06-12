@@ -13,10 +13,10 @@ class pendulumDynamics:
     def __init__(self):
         # initial state conditions stored here
         self.state = np.array([
-            [P.z0],             # initial condition for z
-            [P.theta0],         # initial condition for theta
-            [P.zdot0],          # initial condition for z dot
-            [P.thetadot0]       # initial condition for theta dot
+            [P.theta0],             # initial condition for theta
+            [P.z0],                 # initial condition for z
+            [P.thetadot0],          # initial condition for theta dot
+            [P.zdot]                # initial condition for z dot
             ])
         self.Ts = P.Ts          # sample rate of system
         self.limit = 1.0        # input saturation limit
@@ -31,17 +31,32 @@ class pendulumDynamics:
     # EOM here
     def f(self, state, u):
         # for the system with equations of motion in state space form, xdot = f(x,u), return the EOM f(x,u)
-        y = state.item(0)
-        ydot = state.item(1)
-        # the equations of motion are the following:
-        yddot = -self.a1 * ydot - self.a0 * y + self.b0 * u
+        theta = state[0][0]
+        z = state[1][0]
+        thetadot = state[2][0]
+        zdot = state[3][0]
+        F = u
+        # the equations of motion are calculated through the following:
+        M = np.array([
+            [(self.l**2/3.0)*self.m1,           (self.l/2)*self.m1*np.cos(theta)],
+            [(self.l/2)*self.m1*np.cos(theta),  self.m1+self.m2]
+            ])
+        P = np.array([
+            [(self.l/2)*self.m1*self.g*np.sin(theta)],
+            [(self.l/2)*self.m1*thetadot**2*np.sin(theta) + F - self.b*zdot]   
+            ])
+        temp = np.linalg.inv(M) @ P
+        thetaddot = temp[0][0]
+        zddot = temp[1][0]
         # build xdot and return
-        xdot = np.array([[ydot], [yddot]])
+        xdot = np.array([[thetadot], [zdot], [thetaddot], [zddot]])
         return xdot
     
     def h(self):
         # Returns the measured output y = h(x)
-        y = self.state.item(0)
+        z = self.state.item(0)
+        theta = self.state.item(1)
+        y = np.array([[z], [theta]])
         # return output
         return y
     
