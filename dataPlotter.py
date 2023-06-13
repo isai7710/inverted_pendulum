@@ -33,10 +33,10 @@ class dataPlotter:
         self.theta_history = []  # angle theta
         self.Force_history = []  # control force
 
-        # create a handle for every subplot.
+        # create a handle for every subplot
         self.handle = []
-        self.handle.append(myPlot(self.ax[0], ylabel='z(m)', title='Pendulum Data'))
-        self.handle.append(myPlot(self.ax[1], ylabel='theta(deg)'))
+        self.handle.append(myPlot(self.ax[0], ylabel='theta(d)', title='Pendulum Data'))
+        self.handle.append(myPlot(self.ax[1], ylabel='z(m)'))
         self.handle.append(myPlot(self.ax[2], xlabel='t(s)', ylabel='force(N)'))
 
     def update(self, t, reference, states, ctrl):
@@ -46,13 +46,13 @@ class dataPlotter:
         # update the time history of all plot variables
         self.time_history.append(t)  # time
         self.zref_history.append(reference)  # reference base position
-        self.z_history.append(states[0,0])  # base position
-        self.theta_history.append(180.0/np.pi*states[1,0])  # rod angle (converted to degrees)
+        self.z_history.append(states[1][0])  # base position
+        self.theta_history.append(180.0/np.pi*states[0][0])  # rod angle (converted to degrees)
         self.Force_history.append(ctrl)  # force on the base
 
         # update the plots with associated histories
-        self.handle[0].update(self.time_history, [self.z_history, self.zref_history])
-        self.handle[1].update(self.time_history, [self.theta_history])
+        self.handle[0].update(self.time_history, [self.theta_history])
+        self.handle[1].update(self.time_history, [self.z_history, self.zref_history])
         self.handle[2].update(self.time_history, [self.Force_history])
 
 

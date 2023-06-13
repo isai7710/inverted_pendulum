@@ -16,7 +16,7 @@ class pendulumDynamics:
             [P.theta0],             # initial condition for theta
             [P.z0],                 # initial condition for z
             [P.thetadot0],          # initial condition for theta dot
-            [P.zdot0]                # initial condition for z dot
+            [P.zdot0]               # initial condition for z dot
             ])
         self.Ts = P.Ts          # sample rate of system
         self.limit = 1.0        # input saturation limit
@@ -54,9 +54,9 @@ class pendulumDynamics:
     
     def h(self):
         # Returns the measured output y = h(x)
-        z = self.state.item(0)
-        theta = self.state.item(1)
-        y = np.array([[z], [theta]])
+        theta = self.state[0][0]
+        z = self.state[1][0]
+        y = np.array([[theta], [z]])
         # return output
         return y
     
