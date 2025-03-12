@@ -42,4 +42,3 @@ class signalGenerator:
     def sin(self, t):
         out = self.amplitude * np.sin(2 * np.pi * self.frequency * t) + self.y_offset
         return out
-
