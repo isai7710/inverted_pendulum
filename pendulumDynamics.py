@@ -92,4 +92,3 @@ class pendulumDynamics:
         if abs(u) > limit:
             u = limit * np.sign(u)
         return u
-
