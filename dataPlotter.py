@@ -48,7 +48,7 @@ class dataPlotter:
         self.zref_history.append(reference)  # reference base position
         self.z_history.append(states[1][0])  # base position
         self.theta_history.append(
-            180.0 / np.pi * states[0][0]
+            (180.0 / np.pi) * states[0][0]
         )  # rod angle (converted to degrees)
         self.Force_history.append(ctrl)  # force on the base
 
