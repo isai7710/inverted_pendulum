@@ -11,6 +11,7 @@
 
 import matplotlib.pyplot as plt
 
+import pendulumParam as P
 from dataPlotter import dataPlotter
 from pendulumAnimation import pendulumAnimation
 from pendulumDynamics import pendulumDynamics
@@ -18,17 +19,11 @@ from pendulumDynamics import pendulumDynamics
 # from Controller import Controller
 from signalGenerator import signalGenerator
 
-# simulation parameters
-t_start = 0.0  # start time
-t_end = 20.0  # end time
-t_plot = 0.1  # sample rate for plotter and animation
-Ts = 0.01  # sample rate for dynamics and controller
-
 # instantiate system, controller, and reference classes
 pendulum = pendulumDynamics()
 # controller = Controller(sample_rate=Ts)
 reference = signalGenerator(amplitude=0.5, frequency=0.02)
-force = signalGenerator(amplitude=0.025, frequency=0.01)
+force = signalGenerator(amplitude=0, frequency=1)
 # disturbance = signalGenerator(amplitude=1.0, frequency = 0.0)
 # noise = signalGenerator(amplitude=0.01)
 
@@ -36,19 +31,19 @@ force = signalGenerator(amplitude=0.025, frequency=0.01)
 dataPlot = dataPlotter()
 animation = pendulumAnimation()
 
-t = t_start
+t = P.t_start
 # main simulation loop
-while t < t_end:
+while t < P.t_end:
     # set time for next plot
-    t_next_plot = t + t_plot
+    t_next_plot = t + P.t_plot
     # Propagate dynamics and controller at fast rate Ts
     while t < t_next_plot:
-        r = reference.sin(t)  # assign reference
+        r = reference.square(t)  # assign reference
         # d = disturbance.step(t)   # simulate input disturbance
         # n = noise.random(t)       # simulate sensor noise
-        u = force.square(t)  # update controller
+        u = force.step(t)  # update controller
         y = pendulum.update(u)  # Propagate the dynamics
-        t = t + Ts  # advance time by Ts
+        t = t + P.Ts  # advance time by Ts
     # update animation and data plots
     animation.update(pendulum.state)
     dataPlot.update(t, r, pendulum.state, u)
@@ -59,4 +54,3 @@ while t < t_end:
 print("Press key to close")
 plt.waitforbuttonpress()
 plt.close()
-
