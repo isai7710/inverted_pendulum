@@ -9,15 +9,15 @@ g = 9.8  # Gravity, m/s**2
 b = 0.05  # Damping coefficient, Ns
 alpha = 0.0
 
-# parameters for animation
-w = 0.5  # Width of the cart, m
-h = 0.15  # Height of the cart, m
-gap = 0.005  # Gap between the cart and x-axis
-radius = 0.06  # Radius of circular part of pendulum
+# ----- parameters for animation -----
+# width & height for the cart
+w = 0.5
+h = 0.15
+wheel_radius = 0.05  # Radius of cart wheels
 
 # Initial Conditions
 z0 = 0.0  # ,m
-theta0 = 0.1 * np.pi / 180  # ,rads
+theta0 = 0.01 * np.pi / 180  # ,rads
 zdot0 = 0.0  # ,m/s
 thetadot0 = 0.0  # ,rads/s
 
@@ -29,4 +29,3 @@ t_plot = 0.1  # the plotting and animation is updated at this rate
 
 # saturation limits
 F_max = 5.0  # Max Force, N
-
